@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using Excel = Microsoft.Office.Interop.Excel;
 
 namespace EEEEEEEEE
@@ -8,10 +9,18 @@ namespace EEEEEEEEE
         static void Main(string[] args)
         {
             Console.WriteLine("Hello World!");
+            string url = @"https://portal.petrocollege.ru/Lists/2014/Attachments/10/%D0%B3%D1%80%D1%83%D0%BF%D0%BF_27.09.xlsx";
 
+            using WebClient client = new WebClient
+            {
+                UseDefaultCredentials = false,
+                Credentials = new NetworkCredential("10190997", "2KU3bmZWyC")
+            };
+            client.Headers.Add(HttpRequestHeader.Cookie, null);
+            client.DownloadFile(url, "timetable.xlsx");
 
             Excel.Application ObjWorkExcel = new Excel.Application(); //открыть эксель
-            Excel.Workbook ObjWorkBook = ObjWorkExcel.Workbooks.Open(@"https://portal.petrocollege.ru/Lists/2014/Attachments/10/%D0%B3%D1%80%D1%83%D0%BF%D0%BF_27.09.xlsx", Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing); //открыть файл
+            Excel.Workbook ObjWorkBook = ObjWorkExcel.Workbooks.Open(url); //открыть файл
             Excel.Worksheet ObjWorkSheet = (Excel.Worksheet)ObjWorkBook.Sheets[1]; //получить 1 лист
             var lastCell = ObjWorkSheet.Cells.SpecialCells(Excel.XlCellType.xlCellTypeLastCell);//1 ячейку
             string[,] list = new string[lastCell.Column, lastCell.Row]; // массив значений с листа равен по размеру листу
@@ -24,11 +33,12 @@ namespace EEEEEEEEE
                     Console.Write(list[i, j]);
                 }
             }
-                    
+
             ObjWorkBook.Close(false, Type.Missing, Type.Missing); //закрыть не сохраняя
             ObjWorkExcel.Quit(); // выйти из экселя
             GC.Collect(); // убрать за собой
-        //https://portal.petrocollege.ru/Lists/2014/Attachments/10/%D0%B3%D1%80%D1%83%D0%BF%D0%BF_27.09.xlsx
+
+            // https://portal.petrocollege.ru/Lists/2014/Attachments/10/%D0%B3%D1%80%D1%83%D0%BF%D0%BF_27.09.xlsx
         }
     }
 }
